@@ -1,4 +1,4 @@
-package br.com.traevo.TicketTraevo.dto.controller;
+package br.com.traevo.TicketTraevo.controller;
 
 import br.com.traevo.TicketTraevo.domain.entity.Produto;
 import br.com.traevo.TicketTraevo.repository.ProdutosRepository;
