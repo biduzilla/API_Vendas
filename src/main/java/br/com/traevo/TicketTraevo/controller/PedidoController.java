@@ -36,32 +36,6 @@ public class PedidoController {
 
     @GetMapping("{id}")
     public InformacoesPedidoDto getById(@PathVariable Integer id) {
-        return pedidoService.obterPedidoCompleto(id)
-                .map(p -> converter(p))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido Não Encontrado"));
+        return pedidoService.obterPedidoCompleto(id);
     }
-
-    private InformacoesPedidoDto converter(Pedido pedido) {
-        return InformacoesPedidoDto.builder()
-                .codigo(pedido.getId())
-                .dataPedido(pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-                .nomeCliente(pedido.getCliente().getNome())
-                .total(pedido.getTotal())
-                .items(converter(pedido.getItens()))
-                .build();
-    }
-
-    private List<InformacoesItemPedidoDto> converter(List<ItemPedido> itens) {
-        if (CollectionUtils.isEmpty(itens)) {
-            return Collections.emptyList();
-        }
-
-        return itens.stream().map(item -> InformacoesItemPedidoDto.builder()
-                .descricao(item.getProduto().getDescricao())
-                .precoUnitario(item.getProduto().getPreco())
-                .quantidade(item.getQuantidade())
-                .build()
-        ).collect(Collectors.toList());
-    }
-
 }
