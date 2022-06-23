@@ -4,10 +4,12 @@ import br.com.traevo.TicketTraevo.domain.entity.Cliente;
 import br.com.traevo.TicketTraevo.domain.entity.ItemPedido;
 import br.com.traevo.TicketTraevo.domain.entity.Pedido;
 import br.com.traevo.TicketTraevo.domain.entity.Produto;
+import br.com.traevo.TicketTraevo.domain.enums.StatusPedido;
 import br.com.traevo.TicketTraevo.dto.InformacoesItemPedidoDto;
 import br.com.traevo.TicketTraevo.dto.InformacoesPedidoDto;
 import br.com.traevo.TicketTraevo.dto.ItensPedidoDTO;
 import br.com.traevo.TicketTraevo.dto.PedidoDTO;
+import br.com.traevo.TicketTraevo.exception.PedidoNaoEncontradoException;
 import br.com.traevo.TicketTraevo.exception.RegrasDeNegociosException;
 import br.com.traevo.TicketTraevo.repository.ClientesRepository;
 import br.com.traevo.TicketTraevo.repository.ItensPedidosRepository;
@@ -48,6 +50,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotal(dto.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
 
         List<ItemPedido> itemPedidos = converterItens(pedido, dto.getItens());
         pedidosRepository.save(pedido);
@@ -62,12 +65,22 @@ public class PedidoServiceImpl implements PedidoService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido Não Encontrado"));
     }
 
+    @Override
+    @Transactional
+    public void atualizaStatus(Integer id, StatusPedido statusPedido) {
+        pedidosRepository.findById(id).map(pedido -> {
+            pedido.setStatus(statusPedido);
+            return pedidosRepository.save(pedido);
+        }).orElseThrow(()-> new PedidoNaoEncontradoException());
+    }
+
     private InformacoesPedidoDto converter(Pedido pedido) {
         return InformacoesPedidoDto.builder()
                 .codigo(pedido.getId())
                 .dataPedido(pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .nomeCliente(pedido.getCliente().getNome())
                 .total(pedido.getTotal())
+                .status(pedido.getStatus().name())
                 .items(converter(pedido.getItens()))
                 .build();
     }

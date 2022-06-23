@@ -1,6 +1,7 @@
 package br.com.traevo.TicketTraevo.controller;
 
 import br.com.traevo.TicketTraevo.Errors.ApiErros;
+import br.com.traevo.TicketTraevo.exception.PedidoNaoEncontradoException;
 import br.com.traevo.TicketTraevo.exception.RegrasDeNegociosException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,5 +17,11 @@ public class ApplicationControllerAdvice {
     public ApiErros handleRegraNegocioException(RegrasDeNegociosException ex){
         String msg = ex.getMessage();
         return new ApiErros(msg);
+    }
+
+    @ExceptionHandler(PedidoNaoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiErros handlePedidoNotFoundException(PedidoNaoEncontradoException ex){
+        return new ApiErros(ex.getMessage());
     }
 }

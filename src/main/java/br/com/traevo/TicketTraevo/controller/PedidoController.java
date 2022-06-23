@@ -2,6 +2,8 @@ package br.com.traevo.TicketTraevo.controller;
 
 import br.com.traevo.TicketTraevo.domain.entity.ItemPedido;
 import br.com.traevo.TicketTraevo.domain.entity.Pedido;
+import br.com.traevo.TicketTraevo.domain.enums.StatusPedido;
+import br.com.traevo.TicketTraevo.dto.AtualizacaoStatusPedidoDto;
 import br.com.traevo.TicketTraevo.dto.InformacoesItemPedidoDto;
 import br.com.traevo.TicketTraevo.dto.InformacoesPedidoDto;
 import br.com.traevo.TicketTraevo.dto.PedidoDTO;
@@ -37,5 +39,13 @@ public class PedidoController {
     @GetMapping("{id}")
     public InformacoesPedidoDto getById(@PathVariable Integer id) {
         return pedidoService.obterPedidoCompleto(id);
+    }
+
+    @PatchMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStatus(@PathVariable Integer id,
+                             @RequestBody AtualizacaoStatusPedidoDto statusPedidoDto){
+        String novoStatus = statusPedidoDto.getNovoStatus();
+        pedidoService.atualizaStatus(id, StatusPedido.valueOf(novoStatus));
     }
 }
