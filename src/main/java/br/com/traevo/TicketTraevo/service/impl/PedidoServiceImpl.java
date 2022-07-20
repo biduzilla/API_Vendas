@@ -71,7 +71,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedidosRepository.findById(id).map(pedido -> {
             pedido.setStatus(statusPedido);
             return pedidosRepository.save(pedido);
-        }).orElseThrow(()-> new PedidoNaoEncontradoException());
+        }).orElseThrow(PedidoNaoEncontradoException::new);
     }
 
     private InformacoesPedidoDto converter(Pedido pedido) {
@@ -120,6 +120,5 @@ public class PedidoServiceImpl implements PedidoService {
                     itemPedido.setProduto(produto);
                     return itemPedido;
                 }).collect(Collectors.toList());
-
     }
 }

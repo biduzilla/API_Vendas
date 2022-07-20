@@ -1,4 +1,4 @@
-package br.com.traevo.TicketTraevo.Errors;
+package br.com.traevo.TicketTraevo.exception.Errors;
 
 import lombok.Data;
 import lombok.Getter;
@@ -13,5 +13,9 @@ public class ApiErros {
 
     public ApiErros(String mensagemErro){
         this.errors = List.of(mensagemErro);
+    }
+
+    public ApiErros(List<String> errors) {
+        this.errors = errors;
     }
 }
