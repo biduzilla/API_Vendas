@@ -1,6 +1,7 @@
 package br.com.traevo.TicketTraevo.service.impl;
 
 import br.com.traevo.TicketTraevo.domain.entity.Usuario;
+import br.com.traevo.TicketTraevo.exception.SenhaInvalidaException;
 import br.com.traevo.TicketTraevo.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -34,7 +35,16 @@ public class UsuarioServiceImpl implements UserDetailsService {
                 .build();
     }
 
-    public Usuario salvar(Usuario user){
+    public Usuario salvar(Usuario user) {
         return usuarioRepository.save(user);
+    }
+
+    public UserDetails autenticar(Usuario usuario) {
+        UserDetails userDetails = loadUserByUsername(usuario.getLogin());
+        boolean senhasBatem = encoder.matches(usuario.getSenha(), userDetails.getPassword());
+        if (senhasBatem) {
+            return userDetails;
+        }
+        throw new SenhaInvalidaException();
     }
 }
